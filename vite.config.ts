@@ -4,9 +4,9 @@ import { fileURLToPath, URL } from 'node:url'
 
 // GitHub Pages publica o site em https://USUARIO.github.io/vista-do-lago/
 // O caminho base pode ser sobrescrito com VITE_BASE_PATH (ex.: "/" para domínio próprio).
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ command, mode, isPreview }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const base = command === 'build' ? env.VITE_BASE_PATH || '/vista-do-lago/' : '/'
+  const base = command === 'build' || isPreview ? env.VITE_BASE_PATH || '/vista-do-lago/' : '/'
   return {
     base,
     plugins: [react()],

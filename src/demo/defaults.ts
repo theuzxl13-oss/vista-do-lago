@@ -1,4 +1,4 @@
-import type { MediaCategory, SiteSettings } from '@/types'
+import type { MediaCategory, SiteSettings } from '../types'
 import { DEMO_VIEWBOX } from './plan'
 
 /**

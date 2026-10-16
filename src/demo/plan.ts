@@ -9,7 +9,7 @@
  *  - modo demonstração do site (sem Supabase configurado);
  *  - geração do arquivo supabase/seed.sql (npm run seed:generate).
  */
-import type { LotStatus } from '@/types'
+import type { LotStatus } from '../types'
 
 export const DEMO_VIEWBOX = '0 0 1200 800'
 

@@ -1,0 +1,56 @@
+@import '@fontsource/cormorant-garamond/400.css';
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/600.css';
+@import '@fontsource/cormorant-garamond/400-italic.css';
+@import '@fontsource-variable/manrope';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  body {
+    @apply bg-sand font-sans text-graphite antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  section[id] { scroll-margin-top: 80px; }
+  ::selection { @apply bg-gold/40 text-forest-900; }
+  :focus-visible { outline: 2px solid #C6A76A; outline-offset: 2px; }
+}
+
+@layer components {
+  .container-luxe { @apply mx-auto w-full max-w-7xl px-5 sm:px-8; }
+  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-luxe text-gold-700; }
+  .heading-xl { @apply font-display text-4xl font-medium leading-[1.05] text-forest sm:text-5xl lg:text-6xl; }
+  .gold-rule { @apply h-px w-16 bg-gradient-to-r from-gold to-transparent; }
+  .admin-h1 { @apply font-display text-3xl font-semibold text-forest; }
+  .table-luxe { @apply w-full text-left text-sm; }
+  .table-luxe th { @apply whitespace-nowrap border-b border-sand-300 bg-sand/60 px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-graphite-400; }
+  .table-luxe td { @apply border-b border-sand-200 px-4 py-3 align-middle; }
+  .table-luxe tbody tr { @apply transition-colors hover:bg-sand/40; }
+}
+
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes kenburns {
+  from { transform: scale(1.04) translate3d(0, 0, 0); }
+  to { transform: scale(1.14) translate3d(-1.5%, -1%, 0); }
+}
+.animate-kenburns { animation: kenburns 28s ease-out alternate infinite; }
+
+.leaflet-container { font-family: inherit; }

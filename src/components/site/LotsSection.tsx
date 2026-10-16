@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Info, LayoutGrid, Map as MapIcon, Ruler, Tag, Grid2x2 } from 'lucide-react'
+import { ArrowRight, Info, LayoutGrid, Map as MapIcon, Ruler, Tag, Grid2x2 } from 'lucide-react'
 import { Badge, Button, Drawer, Modal, Select, Spinner, Tabs } from '@/components/ui'
 import { WhatsAppIcon } from '@/components/ui/icons'
 import { LotLegend, LotPlan } from '@/components/map/LotPlan'
@@ -113,12 +113,17 @@ export function LotsSection({ lots, blocks, loading, error }: Props) {
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {filtered.map((l) => (
-                <button key={l.id} onClick={() => select(l)} className="group rounded-xl border border-sand-300 bg-white p-4 text-left transition hover:border-forest hover:shadow-card">
+                <button key={l.id} onClick={() => select(l)}
+                  className="group relative overflow-hidden rounded-xl border border-sand-300 bg-white p-4 text-left transition duration-300 ease-out hover:-translate-y-1 hover:border-forest/40 hover:shadow-soft focus-visible:-translate-y-1">
+                  <span className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100" style={{ backgroundColor: LOT_STATUS[l.status].color }} />
                   <div className="flex items-center justify-between">
-                    <p className="font-display text-2xl text-forest">Lote {l.number}</p>
+                    <p className="font-display text-2xl text-forest transition-colors group-hover:text-forest-600">Lote {l.number}</p>
                     <Badge color={LOT_STATUS[l.status].color}>{LOT_STATUS[l.status].label}</Badge>
                   </div>
-                  <p className="mt-1 text-sm text-graphite-400">Quadra {l.block?.code} · {formatArea(l.area_m2)}</p>
+                  <p className="mt-1 flex items-center justify-between text-sm text-graphite-400">
+                    <span>Quadra {l.block?.code} · {formatArea(l.area_m2)}</span>
+                    <ArrowRight className="h-4 w-4 -translate-x-2 text-gold-700 opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
+                  </p>
                 </button>
               ))}
               {!filtered.length && <p className="text-sm text-graphite-400">Nenhum lote encontrado com os filtros escolhidos.</p>}

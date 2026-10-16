@@ -283,6 +283,8 @@ export interface PrivacySettings {
 export interface AboutSettings {
   title: string
   paragraphs: string[]
+  /** Foto panorâmica real para o topo do site (opcional; sem ela, usa a ilustração em camadas). */
+  hero_image_url?: string
 }
 
 export interface SiteSettings {

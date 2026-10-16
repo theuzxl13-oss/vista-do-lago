@@ -1,6 +1,8 @@
-import { Maximize, Grid3x3, Ruler, Trees, MapPin, Building2, type LucideIcon } from 'lucide-react'
+import { useRef } from 'react'
+import { ArrowRight, Maximize, Grid3x3, Ruler, Trees, MapPin, Building2, type LucideIcon } from 'lucide-react'
 import { useSettings } from '@/context/SettingsContext'
 import { assetUrl } from '@/lib/format'
+import { gsap, useGsap } from '@/lib/gsap'
 import { Reveal, SectionHeading } from './Reveal'
 
 const ICONS: Record<string, LucideIcon> = {
@@ -11,6 +13,17 @@ export function About({ lotsCount, planIsDemo }: { lotsCount: number; planIsDemo
   const { settings } = useSettings()
   const { about, stats } = settings
   const cards = stats.filter((s) => s.visible)
+  const frame = useRef<HTMLDivElement>(null)
+  // A imagem desliza dentro da moldura (parallax) e o selo flutua levemente
+  useGsap(frame, ({ reduce, mobile }, el) => {
+    if (reduce) return
+    const q = gsap.utils.selector(el)
+    gsap.fromTo(q('[data-pimg]'), { yPercent: mobile ? -5 : -10, scale: 1.15 }, {
+      yPercent: mobile ? 5 : 10, scale: 1.15, ease: 'none',
+      scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true },
+    })
+    gsap.fromTo(q('[data-badge]'), { y: 40 }, { y: -30, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } })
+  })
 
   return (
     <section id="sobre" className="relative overflow-hidden bg-sand py-24 sm:py-32">
@@ -21,20 +34,20 @@ export function About({ lotsCount, planIsDemo }: { lotsCount: number; planIsDemo
             {about.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
           </Reveal>
           <Reveal delay={0.2} className="mt-10 flex flex-wrap gap-4">
-            <a href="#lotes" className="inline-flex h-12 items-center rounded-full bg-forest px-7 text-sm font-semibold text-white transition hover:bg-forest-600">Ver lotes disponíveis</a>
+            <a href="#lotes" className="group inline-flex h-12 items-center gap-2 rounded-full bg-forest px-7 text-sm font-semibold text-white transition duration-300 hover:bg-forest-600 hover:shadow-lg hover:shadow-forest/20">Ver lotes disponíveis <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" /></a>
             <a href="#contato" className="inline-flex h-12 items-center rounded-full border border-forest/25 px-7 text-sm font-semibold text-forest transition hover:border-forest">Agendar uma visita</a>
           </Reveal>
         </div>
-        <Reveal delay={0.15} className="relative">
+        <div ref={frame} className="relative">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-soft sm:aspect-[5/4] lg:aspect-[4/5]">
-            <img src={assetUrl('demo/gallery/perspectiva.svg')} alt="Ilustração conceitual do empreendimento" loading="lazy" className="h-full w-full object-cover" />
+            <img data-pimg src={assetUrl('demo/gallery/perspectiva.svg')} alt="Ilustração conceitual do empreendimento" loading="lazy" className="h-full w-full object-cover will-change-transform" />
             <span className="absolute bottom-4 left-4 rounded-full bg-black/30 px-3 py-1 text-[10px] uppercase tracking-widest text-white backdrop-blur">Imagem ilustrativa</span>
           </div>
-          <div className="absolute -bottom-8 -left-4 hidden rounded-2xl bg-forest px-7 py-6 text-white shadow-soft sm:block">
+          <div data-badge className="absolute -bottom-8 -left-4 hidden rounded-2xl bg-forest px-7 py-6 text-white shadow-soft will-change-transform sm:block">
             <p className="font-display text-4xl text-gold">Natureza</p>
             <p className="mt-1 text-xs uppercase tracking-luxe text-white/70">como vizinhança</p>
           </div>
-        </Reveal>
+        </div>
       </div>
 
       <div className="container-luxe mt-24">
@@ -48,7 +61,7 @@ export function About({ lotsCount, planIsDemo }: { lotsCount: number; planIsDemo
               hint = planIsDemo ? 'Planta demonstrativa — sujeito à planta oficial' : c.hint
             }
             return (
-              <Reveal key={c.key} delay={i * 0.06} y={16} className="group bg-white p-8 transition-colors hover:bg-forest">
+              <Reveal key={c.key} delay={i * 0.06} y={16} className="group bg-white p-8 transition-colors duration-500 hover:bg-forest">
                 <Icon className="h-6 w-6 text-gold-700 transition-colors group-hover:text-gold" strokeWidth={1.4} />
                 <p className="mt-6 text-[11px] font-semibold uppercase tracking-widest text-graphite-400 transition-colors group-hover:text-white/60">{c.label}</p>
                 <p className={`mt-2 font-display text-3xl transition-colors group-hover:text-white ${value ? 'text-forest' : 'italic text-olive'}`}>

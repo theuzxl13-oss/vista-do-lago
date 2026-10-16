@@ -5,6 +5,7 @@ import { Header } from '@/components/site/Header'
 import { Footer } from '@/components/site/Footer'
 import { WhatsAppFloat } from '@/components/site/WhatsAppFloat'
 import { isDemoMode } from '@/services/backend'
+import { ScrollTrigger } from '@/lib/gsap'
 
 /** Rola até a seção indicada no hash (inclusive vindo de outra página) ou ao topo. */
 function ScrollManager() {
@@ -25,6 +26,30 @@ function ScrollManager() {
   return null
 }
 
+/** Recalcula as posições do ScrollTrigger quando a altura da página muda (dados e imagens carregando). */
+function ScrollTriggerRefresher() {
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout> | undefined
+    let last = document.body.scrollHeight
+    const ro = new ResizeObserver(() => {
+      const h = document.body.scrollHeight
+      if (Math.abs(h - last) < 2) return
+      last = h
+      clearTimeout(t)
+      t = setTimeout(() => ScrollTrigger.refresh(), 200)
+    })
+    ro.observe(document.body)
+    const onLoad = () => ScrollTrigger.refresh()
+    window.addEventListener('load', onLoad)
+    return () => {
+      clearTimeout(t)
+      ro.disconnect()
+      window.removeEventListener('load', onLoad)
+    }
+  }, [])
+  return null
+}
+
 export function SiteLayout() {
   const [demoNotice, setDemoNotice] = useState(isDemoMode)
   return (
@@ -33,6 +58,7 @@ export function SiteLayout() {
         Pular para o conteúdo
       </a>
       <ScrollManager />
+      <ScrollTriggerRefresher />
       <Header />
       <main id="conteudo">
         <Outlet />

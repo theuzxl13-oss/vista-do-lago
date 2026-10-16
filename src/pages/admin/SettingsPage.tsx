@@ -104,6 +104,7 @@ function AboutAndStats({ about, onChange }: { about: SiteSettings['about']; onCh
   }
   return (
     <div className="space-y-6">
+      <HeroPhotoField value={about.hero_image_url ?? ''} onChange={(hero_image_url) => onChange({ ...about, hero_image_url })} />
       <Field label="Título da seção"><Input value={about.title} onChange={(e) => onChange({ ...about, title: e.target.value })} /></Field>
       <Field label="Texto (um parágrafo por linha em branco)">
         <Textarea rows={7} value={about.paragraphs.join('\n\n')} onChange={(e) => onChange({ ...about, paragraphs: e.target.value.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean) })} />
@@ -126,6 +127,35 @@ function AboutAndStats({ about, onChange }: { about: SiteSettings['about']; onCh
         </div>
       </div>
     </div>
+  )
+}
+
+function HeroPhotoField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const toast = useToast()
+  const [uploading, setUploading] = useState(false)
+  const upload = async (file?: File) => {
+    if (!file) return
+    if (file.size > 10 * 1024 * 1024) return toast('Imagem acima de 10 MB. Exporte em JPG/WebP com cerca de 2400 px de largura.', 'error')
+    setUploading(true)
+    try {
+      onChange((await backend.uploadFile(file, 'hero')).url)
+    } catch (e) {
+      toast(toAppError(e).message, 'error')
+    } finally {
+      setUploading(false)
+    }
+  }
+  return (
+    <Field label="Foto panorâmica do topo do site (opcional)" hint="Use uma foto REAL do lago/empreendimento, horizontal, ~2400 px (JPG ou WebP). Sem foto, o site exibe a ilustração em camadas.">
+      <div className="flex flex-wrap items-center gap-2">
+        <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder="https://…" />
+        <label className="inline-flex h-11 cursor-pointer items-center rounded-full border border-forest/25 px-4 text-sm font-semibold text-forest hover:bg-forest/5">
+          {uploading ? 'Enviando…' : 'Enviar foto'}
+          <input type="file" accept="image/jpeg,image/webp,image/avif,image/png" className="sr-only" onChange={(e) => void upload(e.target.files?.[0])} />
+        </label>
+        {value && <Button size="sm" variant="ghost" onClick={() => onChange('')}>Remover</Button>}
+      </div>
+    </Field>
   )
 }
 

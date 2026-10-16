@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { gsap, useGsap } from '@/lib/gsap'
 import { AnimatePresence, motion } from 'motion/react'
 import { ChevronLeft, ChevronRight, Expand, X } from 'lucide-react'
 import { backend } from '@/services/backend'
@@ -29,8 +30,24 @@ export function Gallery() {
     track.current?.scrollTo({ left: 0 })
   }, [filter])
 
+  // Revelação das fotos: o cartão sobe de dentro de uma máscara e a imagem desfaz um zoom discreto
+  const section = useRef<HTMLElement>(null)
+  useGsap(section, ({ reduce }, el) => {
+    if (reduce) return
+    const cards = gsap.utils.toArray<HTMLElement>('[data-card]', el)
+    if (!cards.length) return
+    gsap.fromTo(cards, { y: 70, opacity: 0 }, {
+      y: 0, opacity: 1, duration: 1.3, stagger: 0.12, ease: 'expo.out',
+      scrollTrigger: { trigger: track.current, start: 'top 85%', once: true },
+    })
+    gsap.fromTo(gsap.utils.toArray('[data-card-media]', el), { scale: 1.25 }, {
+      scale: 1, duration: 1.8, stagger: 0.12, ease: 'power3.out',
+      scrollTrigger: { trigger: track.current, start: 'top 85%', once: true },
+    })
+  }, [items.length, filter])
+
   return (
-    <section id="galeria" className="bg-forest py-24 text-white sm:py-32">
+    <section ref={section} id="galeria" className="bg-forest py-24 text-white sm:py-32">
       <div className="container-luxe">
         <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
           <SectionHeading light eyebrow="Galeria" title={<>Paisagens que inspiram <em className="text-gold">novos começos</em></>} />
@@ -57,21 +74,24 @@ export function Gallery() {
         {loading && Array.from({ length: 3 }).map((_, i) => <div key={i} className="aspect-[4/3] w-[82vw] shrink-0 animate-pulse rounded-2xl bg-white/10 sm:w-[46vw] lg:w-[34rem]" />)}
         {!loading && items.length === 0 && <p className="text-white/60">Novas imagens serão publicadas em breve.</p>}
         {items.map((m, i) => (
-          <motion.button
-            key={m.id} layout onClick={() => setLightbox(i)}
+          <button
+            key={m.id} data-card onClick={() => setLightbox(i)}
             className={cn('group relative shrink-0 snap-start overflow-hidden rounded-2xl text-left',
               i % 3 === 0 ? 'aspect-[4/3] w-[82vw] sm:w-[52vw] lg:w-[38rem]' : 'aspect-[4/3] w-[72vw] sm:w-[40vw] lg:w-[28rem]')}
             aria-label={`Ampliar: ${m.title}`}
           >
-            <img src={assetUrl(m.url)} alt={m.title} loading="lazy" decoding="async" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+            <div data-card-media className="h-full w-full will-change-transform">
+              <img src={assetUrl(m.url)} alt={m.title} loading="lazy" decoding="async" className="h-full w-full object-cover transition duration-[1200ms] ease-out group-hover:scale-[1.06]" />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-forest-900/85 via-transparent to-transparent opacity-90" />
             <MediaBadge item={m} className="absolute left-4 top-4" />
             <Expand className="absolute right-4 top-4 h-5 w-5 text-white opacity-0 transition group-hover:opacity-100" />
-            <div className="absolute inset-x-5 bottom-5">
+            <div className="absolute inset-x-5 bottom-5 transition-transform duration-500 group-hover:-translate-y-1">
               <p className="text-[10px] uppercase tracking-luxe text-gold-300">{MEDIA_CATEGORY_LABEL[m.category]}</p>
               <p className="mt-1 font-display text-2xl">{m.title}</p>
+              <span className="mt-2 block h-px w-0 bg-gold transition-all duration-500 group-hover:w-16" />
             </div>
-          </motion.button>
+          </button>
         ))}
       </div>
 

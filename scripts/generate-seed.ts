@@ -8,7 +8,7 @@ import { DEFAULT_SETTINGS, DEMO_DEVELOPMENT_ID, DEMO_MEDIA } from '../src/demo/d
 const q = (v: string | null) => (v == null ? 'null' : `'${v.replace(/'/g, "''")}'`)
 const { blocks, lots } = buildDemoPlan()
 
-let sql = `-- ARQUIVO GERADO por scripts/generate-seed.ts — não edite manualmente.
+const sql = `-- ARQUIVO GERADO por scripts/generate-seed.ts — não edite manualmente.
 -- Dados DEMONSTRATIVOS (is_demo = true): planta fictícia e imagens ilustrativas.
 -- Substitua pelos dados oficiais no painel administrativo.
 

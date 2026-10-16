@@ -1,4 +1,10 @@
-name: Deploy GitHub Pages
+name: CI e GitHub Pages
+
+# Publicação atual: Settings → Pages → "Deploy from a branch" → pasta /docs
+# (o site compilado é gerado com `npm run build:pages` e versionado em docs/).
+#
+# Alternativa: para publicar direto pelo Actions, mude Settings → Pages → Source
+# para "GitHub Actions" e crie a variável de repositório PAGES_SOURCE = actions.
 
 on:
   push:
@@ -29,19 +35,18 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Configure em Settings → Secrets and variables → Actions → Variables.
-          # Sem elas, o site é publicado em MODO DEMONSTRAÇÃO.
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
+      - if: vars.PAGES_SOURCE == 'actions'
+        uses: actions/configure-pages@v5
+      - if: vars.PAGES_SOURCE == 'actions'
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
+    if: vars.PAGES_SOURCE == 'actions'
     needs: build
     runs-on: ubuntu-latest
     environment:

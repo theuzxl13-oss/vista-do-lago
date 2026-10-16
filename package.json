@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "seed:generate": "tsx scripts/generate-seed.ts"
+    "seed:generate": "tsx scripts/generate-seed.ts",
+    "build:pages": "tsc -b && vite build --outDir docs --emptyOutDir && node scripts/postbuild.mjs docs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

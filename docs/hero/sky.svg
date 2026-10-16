@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMax slice"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+     <stop offset="0" stop-color="#2B3B3A"/><stop offset=".32" stop-color="#7C7268"/>
+     <stop offset=".58" stop-color="#D9A877"/><stop offset=".72" stop-color="#F0CF9D"/><stop offset="1" stop-color="#F6E3C1"/>
+   </linearGradient>
+   <radialGradient id="glow"><stop offset="0" stop-color="#FFE9B8" stop-opacity=".95"/><stop offset=".25" stop-color="#FBD9A0" stop-opacity=".55"/><stop offset="1" stop-color="#F2C48A" stop-opacity="0"/></radialGradient>
+   <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4DE" stop-opacity="0"/><stop offset=".7" stop-color="#FFF1D8" stop-opacity=".55"/><stop offset="1" stop-color="#FFF1D8" stop-opacity="0"/></linearGradient></defs><rect width="1920" height="1080" fill="url(#sky)"/>
+   <circle cx="1240" cy="470" r="520" fill="url(#glow)"/>
+   <circle cx="1240" cy="470" r="62" fill="#FFF3D1"/>
+   <rect y="380" width="1920" height="420" fill="url(#haze)"/></svg>

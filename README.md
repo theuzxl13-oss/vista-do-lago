@@ -67,9 +67,8 @@ npm run lint && npm test && npm run build
    select cron.schedule('expirar-reservas', '*/30 * * * *', $$select public.expire_reservations()$$);
    ```
    (o painel também executa a expiração ao ser aberto).
-8. No GitHub: **Settings → Secrets and variables → Actions → Variables** → crie
-   `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` (chave *anon/publishable*, que é pública por natureza).
-   **Nunca** use a `service_role` no frontend. Rode novamente o workflow para publicar no modo real.
+8. Informe `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` (chave *anon/publishable*, pública por natureza)
+   conforme o modo de publicação descrito abaixo. **Nunca** use a `service_role` no frontend.
 
 ## Segurança e permissões
 
@@ -96,11 +95,20 @@ npm run lint && npm test && npm run build
 
 ## Publicação (GitHub Pages)
 
-O workflow `.github/workflows/deploy.yml` roda lint, testes e build e publica `dist/` no GitHub Pages a
-cada push. Rotas profundas (`/admin`, `/privacidade`) funcionam via `404.html` (cópia da SPA).
+Configuração atual do repositório: **Settings → Pages → Deploy from a branch → `claude/loving-einstein-yz7kky` / `docs`**.
+O site compilado fica versionado na pasta `docs/`:
 
-Se o Pages ainda não estiver ativo: **Settings → Pages → Build and deployment → Source: GitHub Actions**
-e execute o workflow novamente (Actions → *Deploy GitHub Pages* → *Run workflow*).
+```bash
+npm run build:pages     # gera docs/ (com 404.html para as rotas /admin e /privacidade, e .nojekyll)
+git add docs && git commit -m "Atualiza site publicado" && git push
+```
+
+As variáveis do Supabase são incorporadas no momento do build: para publicar no modo real por esse caminho,
+crie `.env.production.local` com `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` antes de `npm run build:pages`.
+
+**Alternativa automática:** em Settings → Pages escolha *Source: GitHub Actions* e crie a variável de
+repositório `PAGES_SOURCE = actions` (junto com `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`). A cada
+push, o workflow `.github/workflows/deploy.yml` roda lint, testes, build e publica sozinho.
 
 Endereço: **https://theuzxl13-oss.github.io/vista-do-lago/**
 
